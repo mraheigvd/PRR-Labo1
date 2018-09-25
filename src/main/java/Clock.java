@@ -1,9 +1,9 @@
 package main.java;
 
 public class Clock {
-    private long time;
+    private int time;
 
-    public long getTime() {
+    public int getTime() {
         return time;
     }
 }

@@ -1,19 +1,18 @@
 package main.java;
 
 public class LocalClock extends Clock {
-    private long ecart;
-    private long delai;
+    private int ecart;
+    private int delai;
 
-    @Override
-    public long getTime() {
-        return super.getTime() + ecart + delai;
+    public long getCorrectedTime() {
+        return getTime() + ecart + delai;
     }
 
-    public void setEcart(long ecart) {
+    public void setEcart(int ecart) {
         this.ecart = ecart;
     }
 
-    public void setDelai(long delai) {
+    public void setDelai(int delai) {
         this.delai = delai;
     }
 }

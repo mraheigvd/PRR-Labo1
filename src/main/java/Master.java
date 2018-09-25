@@ -7,7 +7,7 @@ import java.net.MulticastSocket;
 
 public class Master {
     private Clock clock;
-    private long id;
+    private int id;
     private int bufferSize = 1024;
     private long sleepTime = 3000;
     private MulticastSocket multicastSocket;
@@ -30,7 +30,7 @@ public class Master {
         while(running) {
             id++;
             msg = (Protocol.SYNC + Protocol.SPLITTER + id).getBytes();
-            long time = clock.getTime();
+            int time = clock.getTime();
             sendMsg(msg);
             msg = (Protocol.FOLLOW_UP + Protocol.SPLITTER + time + Protocol.SPLITTER + id).getBytes();
             sendMsg(msg);
