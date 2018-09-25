@@ -1,50 +1,36 @@
 package main.java;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-
-public class Slave {
+public class Slave extends SimpleMulticastSocket {
     private LocalClock localClock;
     private int bufferSize = 1024;
-    private MulticastSocket multicastSocket;
-    private boolean running = true;
-
-    private InetAddress group;
     private int id;
     private int time;
+    private int time2;//todo change name
+    private int delayId;//todo change name
 
-    public Slave() {
-        try {
-            multicastSocket = new MulticastSocket(Protocol.PORT);
-            group = InetAddress.getByName("0.0.0.0");
-            multicastSocket.joinGroup(group);
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    void processMsg(String[] msg) {
+        switch (msg[0]) {
+            case Protocol.SYNC:
+                time = localClock.getTime();
+                id = Integer.valueOf(msg[1]);
+                break;
+            case Protocol.FOLLOW_UP:
+                int rcvTime = Integer.valueOf(msg[1]);
+                int rcvId = Integer.valueOf(msg[2]);
+                if(rcvId == id) localClock.setEcart(rcvTime - time);//todo stock id+time in list or map
+                break;
+            case Protocol.DELAY_RESPONSE:
+                int rcvTime2 = Integer.valueOf(msg[1]);//todo change name
+                int rcvId2 = Integer.valueOf(msg[2]);//todo change name
+                if(rcvId2 == delayId) localClock.setDelai((localClock.getCorrectedTime() - time2) / 2);//todo stock id+time in list or map
+                break;
         }
     }
 
-    private void receiveLoop() {
-        while(running) {
-            String[] msg = receiveMsg().split(Protocol.SPLITTER);
-            switch (msg[0]) {
-                case Protocol.SYNC:
-                    time = localClock.getTime();
-                    id = Integer.valueOf(msg[1]);
-                    break;
-            }
-        }
-    }
-
-    private String receiveMsg() {
-        byte[] msg = new byte[bufferSize];
-        DatagramPacket packet = new DatagramPacket(msg, msg.length);
-        try {
-            multicastSocket.receive(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new String(packet.getData(), 0);
+    private void delayRequest() {
+        byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + delayId++).getBytes();
+        time2 = localClock.getCorrectedTime();
+        sendMsg(msg);
     }
 }

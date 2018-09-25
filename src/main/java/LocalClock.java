@@ -4,7 +4,7 @@ public class LocalClock extends Clock {
     private int ecart;
     private int delai;
 
-    public long getCorrectedTime() {
+    public int getCorrectedTime() {
         return getTime() + ecart + delai;
     }
 

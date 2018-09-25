@@ -1,28 +1,20 @@
 package main.java;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-
-public class Master {
+public class Master extends SimpleMulticastSocket {
     private Clock clock;
     private int id;
     private int bufferSize = 1024;
     private long sleepTime = 3000;
-    private MulticastSocket multicastSocket;
     private boolean running = true;
 
-    private InetAddress group;
-
-    public Master() {
-        try {
-            multicastSocket = new MulticastSocket(Protocol.PORT);
-            group = InetAddress.getByName("0.0.0.0");
-            multicastSocket.joinGroup(group);
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    void processMsg(String[] msg) {
+        switch(msg[0]) {
+            case Protocol.DELAY_REQUEST:
+                sendMsg((Protocol.DELAY_RESPONSE + Protocol.SPLITTER + clock.getTime() + Protocol.SPLITTER + msg[1]).getBytes());
+                break;
         }
+
     }
 
     public void syncLoop() {
@@ -39,15 +31,6 @@ public class Master {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void sendMsg(byte[] msg) {
-        DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.PORT);
-        try {
-            multicastSocket.send(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
