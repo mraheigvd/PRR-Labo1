@@ -11,14 +11,15 @@ public class Master {
     private int bufferSize = 1024;
     private long sleepTime = 3000;
     private MulticastSocket multicastSocket;
+    private boolean running = true;
 
-    private String address = "0.0.0.0";
-    private InetAddress group = InetAddress.getByName("");
+    private InetAddress group;
 
     public Master() {
         try {
             multicastSocket = new MulticastSocket(Protocol.PORT);
-            multicastSocket.joinGroup(InetAddress.getByName(address));
+            group = InetAddress.getByName("0.0.0.0");
+            multicastSocket.joinGroup(group);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -26,14 +27,12 @@ public class Master {
 
     public void syncLoop() {
         byte[] msg = new byte[bufferSize];
-        while(true) {
+        while(running) {
             id++;
             msg = (Protocol.SYNC + Protocol.SPLITTER + id).getBytes();
             long time = clock.getTime();
-            // send
             sendMsg(msg);
             msg = (Protocol.FOLLOW_UP + Protocol.SPLITTER + time + Protocol.SPLITTER + id).getBytes();
-            // send
             sendMsg(msg);
             try {
                 Thread.sleep(sleepTime);
@@ -43,7 +42,12 @@ public class Master {
         }
     }
 
-    public void sendMsg(byte[] msg) {
-        DatagramPacket packet = new DatagramPacket(msg, msg.length, address, Protocol.PORT)
+    private void sendMsg(byte[] msg) {
+        DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.PORT);
+        try {
+            multicastSocket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
