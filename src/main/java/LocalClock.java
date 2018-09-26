@@ -4,8 +4,17 @@ public class LocalClock extends Clock {
     private int ecart;
     private int delai;
 
-    public int getCorrectedTime() {
+    /*public int getCorrectedTime() {
         return getTime() + ecart + delai;
+    }*/
+
+    @Override
+    public int getTime() {
+        return super.getTime() + ecart + delai;
+    }
+
+    public int getUncorrectedTime() {
+        return super.getTime();
     }
 
     public void setEcart(int ecart) {

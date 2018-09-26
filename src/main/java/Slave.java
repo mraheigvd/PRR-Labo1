@@ -13,7 +13,7 @@ public class Slave extends SimpleMulticastSocket {
     public void processMsg(String[] msg) {
         switch (msg[0]) {
             case Protocol.SYNC:
-                time = localClock.getTime();
+                time = localClock.getUncorrectedTime();
 
                 System.out.println(msg[1]);
                 System.out.println(msg[1].length());
@@ -28,7 +28,7 @@ public class Slave extends SimpleMulticastSocket {
             case Protocol.DELAY_RESPONSE:
                 int rcvTime2 = Integer.valueOf(msg[1]);//todo change name
                 int rcvId2 = Integer.valueOf(msg[2]);//todo change name
-                if(rcvId2 == delayId) localClock.setDelai((localClock.getCorrectedTime() - time2) / 2);//todo stock id+time in list or map
+                if(rcvId2 == delayId) localClock.setDelai((localClock.getTime() - time2) / 2);//todo stock id+time in list or map
                 break;
         }
     }
@@ -56,7 +56,7 @@ public class Slave extends SimpleMulticastSocket {
 
     private void delayRequest() {
         byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + delayId++).getBytes();
-        time2 = localClock.getCorrectedTime();
+        time2 = localClock.getTime();
         sendMsg(msg);
     }
 

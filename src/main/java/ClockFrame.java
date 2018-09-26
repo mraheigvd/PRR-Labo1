@@ -12,7 +12,7 @@ public class ClockFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         label = new JLabel(String.valueOf(clock.getTime()));
         add(label);
-        setSize(250, 100);
+        setSize(250, 70);
         setVisible(true);
     }
 
