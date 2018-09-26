@@ -56,7 +56,7 @@ public abstract class SimpleMulticastSocket {
         }
 
         try {
-            Thread.sleep(200);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

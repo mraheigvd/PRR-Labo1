@@ -19,7 +19,7 @@ public class Main {
         while(true) {
             for(ClockFrame clockFrame : clockFrames) clockFrame.update();
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

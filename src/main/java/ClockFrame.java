@@ -1,6 +1,8 @@
 package main.java;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class ClockFrame extends JFrame {
     private JLabel label;
@@ -14,6 +16,31 @@ public class ClockFrame extends JFrame {
         add(label);
         setSize(250, 70);
         setVisible(true);
+
+        // todo prettier
+        if(clock instanceof LocalClock) {
+            setSize(350, 70);
+            setLayout(new FlowLayout());
+
+            JButton timeButton = new JButton("reset Time");
+            timeButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    clock.setTime(0);
+                }
+            });
+            add(timeButton);
+
+            JButton corrButton = new JButton("reset Corr");
+            corrButton.addActionListener(new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    ((LocalClock) clock).setDelai(0);
+                    ((LocalClock) clock).setEcart(0);
+                }
+            });
+            add(corrButton);
+        }
     }
 
     public void update() {
