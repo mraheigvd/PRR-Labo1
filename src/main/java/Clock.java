@@ -21,21 +21,8 @@ public class Clock {
 
     }
 
-    private class ClockFrame extends JFrame {
-        private JLabel label;
-
-        public ClockFrame(String name) {
-            setName(name);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            label = new JLabel(String.valueOf(Clock.this.getTime()));
-            add(label);
-            setSize(20, 20);
-            setVisible(true);
-        }
-
-        public void update() {
-            increaseTime();
-            label.setText(String.valueOf(Clock.this.getTime()));
-        }
+    @Override
+    public String toString() {
+        return String.valueOf(time);
     }
 }

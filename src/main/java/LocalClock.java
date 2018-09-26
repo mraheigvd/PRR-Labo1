@@ -20,4 +20,9 @@ public class LocalClock extends Clock {
     public void setDelai(int delai) {
         this.delai = delai;
     }
+
+    @Override
+    public String toString() {
+        return getUncorrectedTime() + " + " + ecart + " + " + delai + " = " + getTime();
+    }
 }

@@ -10,7 +10,7 @@ public class ClockFrame extends JFrame {
         this.clock = clock;
         setTitle(name);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        label = new JLabel(String.valueOf(clock.getTime()));
+        label = new JLabel(String.valueOf(clock.toString()));
         add(label);
         setSize(250, 70);
         setVisible(true);
@@ -18,6 +18,6 @@ public class ClockFrame extends JFrame {
 
     public void update() {
         clock.increaseTime();
-        label.setText(String.valueOf(clock.getTime()));
+        label.setText(String.valueOf(clock.toString()));
     }
 }
