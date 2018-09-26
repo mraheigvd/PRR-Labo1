@@ -51,7 +51,7 @@ public class Slave extends SimpleMulticastSocket {
     }
 
     private void delayRequest() {
-        byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + delayId++).getBytes();
+        byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + ++delayId).getBytes();
         time2 = localClock.getTime();
         sendMsg(msg);
     }

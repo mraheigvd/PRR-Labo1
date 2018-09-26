@@ -55,6 +55,12 @@ public abstract class SimpleMulticastSocket {
             e.printStackTrace();
         }
 
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         String temp =  new String(packet.getData());
         LOG.info(temp);
         return temp.substring(0, temp.indexOf('\0'));
