@@ -14,10 +14,6 @@ public class Slave extends SimpleMulticastSocket {
         switch (msg[0]) {
             case Protocol.SYNC:
                 time = localClock.getUncorrectedTime();
-
-                System.out.println(msg[1]);
-                System.out.println(msg[1].length());
-
                 id = Integer.valueOf(msg[1]);
                 break;
             case Protocol.FOLLOW_UP:

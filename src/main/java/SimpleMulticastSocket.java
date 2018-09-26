@@ -29,11 +29,6 @@ public abstract class SimpleMulticastSocket {
     protected void receiveLoop() {
         while(running) {
             String[] msg = receiveMsg().split(Protocol.SPLITTER);
-
-            String info = "split : ";
-            for(String s : msg) info += s + "-";
-            LOG.info(info);
-
             processMsg(msg);
         }
     }
@@ -43,11 +38,6 @@ public abstract class SimpleMulticastSocket {
     abstract public void start();
 
     protected void sendMsg(byte[] msg) {
-
-        String info = "send : ";
-        info += new String(msg);
-        LOG.info(info);
-
         DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.PORT);
         try {
             multicastSocket.send(packet);
@@ -65,16 +55,8 @@ public abstract class SimpleMulticastSocket {
             e.printStackTrace();
         }
 
-        String info;
-        info = "receive : ";
-        info += new String(packet.getData());
-        LOG.info(info);
-
-        //return new String(packet.getData(), 0);
         String temp =  new String(packet.getData());
-        temp = temp.substring(0, temp.indexOf('\0'));
-
-        //return new String(packet.getData(), 0, 1);
-        return temp;
+        LOG.info(temp);
+        return temp.substring(0, temp.indexOf('\0'));
     }
 }
