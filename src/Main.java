@@ -6,9 +6,10 @@ import java.util.ArrayList;
 
 public class Main {
     static ArrayList<ClockFrame> clockFrames = new ArrayList<>();
+    static int sleepTime = 3000;
 
     public static void main(String[] args) {
-        clockFrames.add(new ClockFrame(new Master().getClock(), "master"));
+        clockFrames.add(new ClockFrame(new Master(sleepTime).getClock(), "master"));
         createSlave("slave 1");
         createSlave("slave 2");
         createSlave("slave 3");
@@ -31,6 +32,6 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        clockFrames.add(new ClockFrame(new Slave().getLocalClock(), name));
+        clockFrames.add(new ClockFrame(new Slave(4 * sleepTime).getLocalClock(), name));
     }
 }

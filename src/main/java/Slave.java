@@ -1,5 +1,7 @@
 package main.java;
 
+import java.util.Random;
+
 public class Slave extends SimpleMulticastSocket {
     private LocalClock localClock = new LocalClock();
     private int synTime = 0;
@@ -7,7 +9,12 @@ public class Slave extends SimpleMulticastSocket {
     private int resTime = 0;
     private int synId = 0;
     private int reqId = 0;
-    private long sleepTime = 12000;
+    private long sleepTime;
+
+    public Slave(int sleepTime) {
+        this.sleepTime = sleepTime;
+        reqId = new Random().nextInt(Integer.MAX_VALUE / 2);
+    }
 
     @Override
     public void processMsg(String[] msg) {
