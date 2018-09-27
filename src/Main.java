@@ -3,18 +3,17 @@ import main.java.Master;
 import main.java.Slave;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 public class Main {
+    static ArrayList<ClockFrame> clockFrames = new ArrayList<>();
 
     public static void main(String[] args) {
-        ArrayList<ClockFrame> clockFrames = new ArrayList<>();
-
-        Master master = new Master();
-        clockFrames.add(new ClockFrame(master.getClock(), "master"));
-        Slave slave1 = new Slave();
-        clockFrames.add(new ClockFrame(slave1.getLocalClock(), "slave 1"));
-        slave1.getLocalClock().setTime(-10);
+        clockFrames.add(new ClockFrame(new Master().getClock(), "master"));
+        createSlave("slave 1");
+        createSlave("slave 2");
+        createSlave("slave 3");
+        createSlave("slave 4");
+        createSlave("slave 5");
 
         while(true) {
             for(ClockFrame clockFrame : clockFrames) clockFrame.update();
@@ -24,5 +23,14 @@ public class Main {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void createSlave(String name) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        clockFrames.add(new ClockFrame(new Slave().getLocalClock(), name));
     }
 }

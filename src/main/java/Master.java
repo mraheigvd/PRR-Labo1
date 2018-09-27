@@ -3,9 +3,7 @@ package main.java;
 public class Master extends SimpleMulticastSocket {
     private Clock clock = new Clock();
     private int id = 0;
-    private int bufferSize = 1024;
     private long sleepTime = 3000;
-    private boolean running = true;
 
     @Override
     public void processMsg(String[] msg) {

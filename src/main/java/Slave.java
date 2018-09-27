@@ -2,29 +2,30 @@ package main.java;
 
 public class Slave extends SimpleMulticastSocket {
     private LocalClock localClock = new LocalClock();
-    private int bufferSize = 1024;
-    private int id = 0;
-    private int time = 0;
-    private int time2 = 0;//todo change name
-    private int delayId = 0;//todo change name
+    private int synTime = 0;
+    private int reqTime = 0;
+    private int resTime = 0;
+    private int synId = 0;
+    private int reqId = 0;
     private long sleepTime = 12000;
 
     @Override
     public void processMsg(String[] msg) {
         switch (msg[0]) {
             case Protocol.SYNC:
-                time = localClock.getUncorrectedTime();
-                id = Integer.valueOf(msg[1]);
+                synTime = localClock.getUncorrectedTime();
+                synId = Integer.valueOf(msg[1]);
                 break;
             case Protocol.FOLLOW_UP:
-                int rcvTime = Integer.valueOf(msg[1]);
-                int rcvId = Integer.valueOf(msg[2]);
-                if(rcvId == id) localClock.setEcart(rcvTime - time);//todo stock id+time in list or map
+                int rcvSynTime = Integer.valueOf(msg[1]);
+                int rcvSynId = Integer.valueOf(msg[2]);
+                if(rcvSynId == synId) localClock.setEcart(rcvSynTime - synTime);//todo stock id+time in list or map
                 break;
             case Protocol.DELAY_RESPONSE:
-                int rcvTime2 = Integer.valueOf(msg[1]);//todo change name
-                int rcvId2 = Integer.valueOf(msg[2]);//todo change name
-                if(rcvId2 == delayId) localClock.setDelai((localClock.getTime() - time2) / 2);//todo stock id+time in list or map
+                resTime = localClock.getUncorrectedTime();
+                //int rcvTime = Integer.valueOf(msg[1]);
+                int rcvReqId = Integer.valueOf(msg[2]);
+                if(rcvReqId == reqId) localClock.setDelai((resTime - reqTime) / 2);//todo stock id+time in list or map
                 break;
         }
     }
@@ -51,8 +52,8 @@ public class Slave extends SimpleMulticastSocket {
     }
 
     private void delayRequest() {
-        byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + ++delayId).getBytes();
-        time2 = localClock.getTime();
+        byte[] msg = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + ++reqId).getBytes();
+        reqTime = localClock.getUncorrectedTime();
         sendMsg(msg);
     }
 
