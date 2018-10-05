@@ -1,7 +1,5 @@
 package main.java;
 
-import javax.swing.*;
-
 public class Clock {
     private int time;
 
@@ -15,10 +13,6 @@ public class Clock {
 
     public void increaseTime() {
         time++;
-    }
-
-    public void display(String name) {
-
     }
 
     @Override

@@ -50,6 +50,9 @@ public class Master extends SimpleUDP {
         t2.start();
     }
 
+    /**
+     * send a "sync" message followed by a "follow up" message to let slaves synchronise on master clock
+     */
     private void sendSync() {
         id++;
         byte[] msg = (Protocol.SYNC + Protocol.SPLITTER + id).getBytes();
@@ -64,10 +67,14 @@ public class Master extends SimpleUDP {
         }
     }
 
+    /**
+     * response to a delay request with a delay response
+     */
     private void processDelayRequest() {
-        DatagramPacket packet = DGReceiveMsg();
-        String msg = new String(packet.getData());
-        String[] strings = msg.substring(0, msg.indexOf('\0')).split(Protocol.SPLITTER);
+        DatagramPacket packet = DGReceiveMsg();//TODO TEST
+        //String msg = new String(packet.getData());
+        //String[] strings = msg.substring(0, msg.indexOf('\0')).split(Protocol.SPLITTER);
+        String[] strings = processDatagram(packet).split(Protocol.SPLITTER);
         if(strings[0].equals(Protocol.DELAY_REQUEST)) {
             byte[] buffer = (Protocol.DELAY_RESPONSE + Protocol.SPLITTER + clock.getTime() + Protocol.SPLITTER + strings[1]).getBytes();
             DGSendMsg(buffer, packet.getAddress(), Protocol.RES_PORT);

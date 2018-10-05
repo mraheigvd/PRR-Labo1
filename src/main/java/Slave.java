@@ -5,11 +5,9 @@ import java.net.*;
 
 public class Slave extends SimpleUDP {
     private LocalClock localClock = new LocalClock();
-    private int synTime = 0;
-    private int reqTime = 0;
-    private int resTime = 0;
-    private int synId = 0;
-    private int reqId = 0;
+    private int syncTime = 0;
+    private int syncId = 0;
+    private int requestId = 0;
     private long sleepTime;
 
     public Slave(int sleepTime) {
@@ -53,31 +51,37 @@ public class Slave extends SimpleUDP {
         t2.start();
     }
 
+    /**
+     * precess "sync" and "follow up" messages to synchronise clock with master
+     */
     private void processSync() {
         String[] msg = processDatagram(MCReceiveMsg()).split(Protocol.SPLITTER);
         switch (msg[0]) {
             case Protocol.SYNC:
-                synTime = localClock.getUncorrectedTime();
-                synId = Integer.valueOf(msg[1]);
+                syncTime = localClock.getUncorrectedTime();
+                syncId = Integer.valueOf(msg[1]);
                 break;
             case Protocol.FOLLOW_UP:
                 int rcvSynTime = Integer.valueOf(msg[1]);
                 int rcvSynId = Integer.valueOf(msg[2]);
-                if(rcvSynId == synId) localClock.setEcart(rcvSynTime - synTime);//todo stock id+time in list or map
+                if(rcvSynId == syncId) localClock.setEcart(rcvSynTime - syncTime);//todo stock id+time in list or map
                 break;
         }
     }
 
+    /**
+     * send a delay request and wait the response to calculate the delay (and correct it)
+     */
     private void sendDelayRequest() {
         try {
-            byte[] buffer = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + ++reqId).getBytes();
-            reqTime = localClock.getUncorrectedTime();
+            byte[] buffer = (Protocol.DELAY_REQUEST + Protocol.SPLITTER + ++requestId).getBytes();
+            int requestTime = localClock.getUncorrectedTime();
             DGSendMsg(buffer, InetAddress.getByName(Protocol.DELAY_ADDRESS), Protocol.REQ_PORT);
             String[] strings = processDatagram(DGReceiveMsg()).split(Protocol.SPLITTER);
-            resTime = localClock.getUncorrectedTime();
-            int rcvTime = Integer.valueOf(strings[1]);
-            int rcvReqId = Integer.valueOf(strings[2]);
-            if(rcvReqId == reqId) localClock.setDelai((resTime - reqTime) / 2);//todo stock id+time in list or map
+            int responseTime = localClock.getUncorrectedTime();
+            int receiveTime = Integer.valueOf(strings[1]);
+            int receiveId = Integer.valueOf(strings[2]);
+            if(receiveId == requestId) localClock.setDelai((responseTime - requestTime) / 2);//todo stock id+time in list or map
         } catch (IOException e) {
             e.printStackTrace();
         }
