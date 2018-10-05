@@ -26,24 +26,18 @@ public class Slave extends SimpleUDP {
 
     @Override
     public void start() {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) processSync();
-            }
+        Thread t1 = new Thread(() -> {
+            while(isRunning()) processSync();
         });
 
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    sendDelayRequest();
+        Thread t2 = new Thread(() -> {
+            while(isRunning()) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                sendDelayRequest();
             }
         });
 
@@ -79,7 +73,7 @@ public class Slave extends SimpleUDP {
             DGSendMsg(buffer, InetAddress.getByName(Protocol.DELAY_ADDRESS), Protocol.REQ_PORT);
             String[] strings = processDatagram(DGReceiveMsg()).split(Protocol.SPLITTER);
             int responseTime = localClock.getUncorrectedTime();
-            int receiveTime = Integer.valueOf(strings[1]);
+            //int receiveTime = Integer.valueOf(strings[1]);
             int receiveId = Integer.valueOf(strings[2]);
             if(receiveId == requestId) localClock.setDelai((responseTime - requestTime) / 2);//todo stock id+time in list or map
         } catch (IOException e) {

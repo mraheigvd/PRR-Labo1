@@ -25,24 +25,18 @@ public class Master extends SimpleUDP {
 
     @Override
     public void start() {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) processDelayRequest();
-            }
+        Thread t1 = new Thread(() -> {
+            while(isRunning()) processDelayRequest();
         });
 
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    sendSync();
+        Thread t2 = new Thread(() -> {
+            while(isRunning()) {
+                try {
+                    Thread.sleep(sleepTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                sendSync();
             }
         });
 

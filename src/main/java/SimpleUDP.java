@@ -14,6 +14,7 @@ public abstract class SimpleUDP {
     private MulticastSocket multicastSocket;
     private DatagramSocket datagramSocket;
     private InetAddress group;
+    private boolean running = true;
 
     public SimpleUDP() {
         try {
@@ -36,7 +37,7 @@ public abstract class SimpleUDP {
     /**
      * start all thread to process received messages and send messages regularly (sync, delay, ...)
      */
-    abstract public void start();
+    public abstract void start();
 
     /**
      * send a message on multicast
@@ -87,7 +88,7 @@ public abstract class SimpleUDP {
      * @param packet packet to process
      * @return extract the data of a DatagramPacket as a String
      */
-    public static String processDatagram(DatagramPacket packet) {
+    protected static String processDatagram(DatagramPacket packet) {
         String temp =  new String(packet.getData());
         return temp.substring(0, temp.indexOf('\0'));
     }
@@ -115,5 +116,13 @@ public abstract class SimpleUDP {
         LOG.info(new String(packet.getData()));
 
         return packet;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void stop() {
+        running = false;
     }
 }
