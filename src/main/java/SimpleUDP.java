@@ -44,7 +44,7 @@ public abstract class SimpleUDP {
      * @param messages messages to send
      */
     protected void MCSendMsg(byte[][] messages) {
-
+        simulatePing();
         try {
             for(byte[] msg : messages) {
                 DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.SYNC_PORT);
@@ -70,6 +70,7 @@ public abstract class SimpleUDP {
      * @param port port to use to send
      */
     protected void DGSendMsg(byte[][] messages, InetAddress address, int port) {
+        simulatePing();
         try {
             for(byte[] msg : messages) {
                 DatagramPacket packet = new DatagramPacket(msg, msg.length, address, port);
@@ -112,15 +113,20 @@ public abstract class SimpleUDP {
             e.printStackTrace();
         }
 
-        // simulation of delay (ping) between master and slaves
+        LOG.info(new String(packet.getData()));
+
+        return packet;
+    }
+
+    /**
+     * simulate ping between slaves and master
+     */
+    private void simulatePing() {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        LOG.info(new String(packet.getData()));
-
-        return packet;
     }
 
     public boolean isRunning() {
