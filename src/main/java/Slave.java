@@ -51,8 +51,7 @@ public class Slave extends SimpleUDP {
                         Random random = new Random();
                         while(isRunning()) {
                             try {
-                                //Thread.sleep((4 * Protocol.K) + random.nextInt((60 - 4) * Protocol.K));
-                                Thread.sleep((4 * Protocol.K));
+                                Thread.sleep((4 * Protocol.K) + random.nextInt((60 - 4) * Protocol.K));
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
