@@ -3,6 +3,7 @@ package main.java;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 
 public class Master extends SimpleUDP {
     private Clock clock = new Clock();
@@ -49,11 +50,18 @@ public class Master extends SimpleUDP {
      */
     private void sendSync() {
         id++;
-        byte[] msg = (Protocol.SYNC + Protocol.SPLITTER + id).getBytes();
-        int time = clock.getTime();
-        MCSendMsg(msg);
-        msg = (Protocol.FOLLOW_UP + Protocol.SPLITTER + time + Protocol.SPLITTER + id).getBytes();
-        MCSendMsg(msg);
+        ByteBuffer bbId = ByteBuffer.allocate(4);
+        ByteBuffer bbTime = ByteBuffer.allocate(4);
+        byte[][] messages = {Protocol.SYNC.getBytes(), bbId.putInt(id).array()};//sync message
+        int time = clock.getTime();//save current time
+        MCSendMsg(messages);
+
+        messages = new byte[3][];//follow up message
+        messages[0] = Protocol.FOLLOW_UP.getBytes();
+        messages[1] = bbTime.putInt(time).array();
+        messages[2] = bbId.array();//
+        MCSendMsg(messages);
+
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
@@ -65,13 +73,18 @@ public class Master extends SimpleUDP {
      * response to a delay request with a delay response
      */
     private void processDelayRequest() {
-        DatagramPacket packet = DGReceiveMsg();//TODO TEST
-        //String msg = new String(packet.getData());
-        //String[] strings = msg.substring(0, msg.indexOf('\0')).split(Protocol.SPLITTER);
-        String[] strings = processDatagram(packet).split(Protocol.SPLITTER);
-        if(strings[0].equals(Protocol.DELAY_REQUEST)) {
-            byte[] buffer = (Protocol.DELAY_RESPONSE + Protocol.SPLITTER + clock.getTime() + Protocol.SPLITTER + strings[1]).getBytes();
-            DGSendMsg(buffer, packet.getAddress(), Protocol.RES_PORT);
+        DatagramPacket packet = DGReceiveMsg();
+        String strings = processDatagramToString(packet);
+        if(strings.equals(Protocol.DELAY_REQUEST)) {
+            ByteBuffer bbTime = ByteBuffer.allocate(4);
+            ByteBuffer bbId = ByteBuffer.allocate(4);
+
+            byte[][] message = {
+                    Protocol.DELAY_RESPONSE.getBytes(),
+                    bbTime.putInt(clock.getTime()).array(),
+                    bbId.putInt(ByteBuffer.wrap(DGReceiveMsg().getData()).getInt()).array()
+            };
+            DGSendMsg(message, packet.getAddress(), Protocol.RES_PORT);
         }
     }
 

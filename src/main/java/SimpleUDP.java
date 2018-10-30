@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 public abstract class SimpleUDP {
@@ -41,12 +42,15 @@ public abstract class SimpleUDP {
 
     /**
      * send a message on multicast
-     * @param msg message to send
+     * @param messages messages to send
      */
-    protected void MCSendMsg(byte[] msg) {
-        DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.SYNC_PORT);
+    protected void MCSendMsg(byte[][] messages) {
+
         try {
-            multicastSocket.send(packet);
+            for(byte[] msg : messages) {
+                DatagramPacket packet = new DatagramPacket(msg, msg.length, group, Protocol.SYNC_PORT);
+                multicastSocket.send(packet);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,10 +70,12 @@ public abstract class SimpleUDP {
      * @param address address to send to
      * @param port port to use to send
      */
-    protected void DGSendMsg(byte[] msg, InetAddress address, int port) {
-        DatagramPacket packet = new DatagramPacket(msg, msg.length, address, port);
+    protected void DGSendMsg(byte[][] messages, InetAddress address, int port) {
         try {
-            datagramSocket.send(packet);
+            for(byte[] msg : messages) {
+                DatagramPacket packet = new DatagramPacket(msg, msg.length, address, port);
+                multicastSocket.send(packet);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -85,10 +91,10 @@ public abstract class SimpleUDP {
 
     /**
      *
-     * @param packet packet to process
+     * @param packet packet to process into String
      * @return extract the data of a DatagramPacket as a String
      */
-    protected static String processDatagram(DatagramPacket packet) {
+    protected static String processDatagramToString(DatagramPacket packet) {
         String temp =  new String(packet.getData());
         return temp.substring(0, temp.indexOf('\0'));
     }
@@ -109,7 +115,7 @@ public abstract class SimpleUDP {
 
         // simulation of delay (ping) between master and slaves
         try {
-            Thread.sleep(2000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
