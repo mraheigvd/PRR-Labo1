@@ -17,7 +17,6 @@ public class ClockFrame extends JFrame {
         setSize(250, 70);
         setVisible(true);
 
-        // todo prettier
         if(clock instanceof LocalClock) {
             setSize(350, 70);
             setLayout(new FlowLayout());

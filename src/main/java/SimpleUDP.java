@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 public abstract class SimpleUDP {
@@ -66,7 +65,7 @@ public abstract class SimpleUDP {
 
     /**
      * send a message with DatagramSocket(point to point)
-     * @param msg message to send
+     * @param messages messages to send
      * @param address address to send to
      * @param port port to use to send
      */
