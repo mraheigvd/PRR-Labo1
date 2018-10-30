@@ -10,4 +10,5 @@ public class Protocol {
     public static final int SYNC_PORT = 4444;
     public static final int REQ_PORT = 4445;
     public static final int RES_PORT = 4446;
+    public static final int K = 3000;
 }

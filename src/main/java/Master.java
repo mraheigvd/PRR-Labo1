@@ -8,11 +8,6 @@ import java.nio.ByteBuffer;
 public class Master extends SimpleUDP {
     private Clock clock = new Clock();
     private int id = 0;
-    private long sleepTime;
-
-    public Master(int sleepTime) {
-        this.sleepTime = sleepTime;
-    }
 
     @Override
     public DatagramSocket initDatagramSocket() {
@@ -26,17 +21,18 @@ public class Master extends SimpleUDP {
 
     @Override
     public void start() {
-        Thread t1 = new Thread(() -> {
+        Thread t1 = new Thread(() -> {//delay loop
             while(isRunning()) processDelayRequest();
         });
 
-        Thread t2 = new Thread(() -> {
+        Thread t2 = new Thread(() -> {//sync loop
             while(isRunning()) {
                 try {
-                    Thread.sleep(sleepTime);
+                    Thread.sleep(Protocol.K);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
                 sendSync();
             }
         });
@@ -61,12 +57,6 @@ public class Master extends SimpleUDP {
         messages[1] = bbTime.putInt(time).array();
         messages[2] = bbId.array();//
         MCSendMsg(messages);
-
-        try {
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -93,7 +83,7 @@ public class Master extends SimpleUDP {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ClockFrame clockFrame = new ClockFrame(new Master(3000).getClock(), "master");
+        ClockFrame clockFrame = new ClockFrame(new Master().getClock(), "master");
         while(true) {
             clockFrame.update();
             Thread.sleep(500);

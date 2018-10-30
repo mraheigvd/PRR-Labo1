@@ -3,17 +3,14 @@ package main.java;
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.util.Random;
 
 public class Slave extends SimpleUDP {
     private LocalClock localClock = new LocalClock();
     private int syncTime = 0;
     private int syncId = 0;
     private int requestId = 0;
-    private long sleepTime;
-
-    public Slave(int sleepTime) {
-        this.sleepTime = sleepTime;
-    }
+    private boolean delayRequestStarted = false;
 
     @Override
     public DatagramSocket initDatagramSocket() {
@@ -27,23 +24,11 @@ public class Slave extends SimpleUDP {
 
     @Override
     public void start() {
-        Thread t1 = new Thread(() -> {
+        Thread t1 = new Thread(() -> {//sync loop
             while(isRunning()) processSync();
         });
 
-        Thread t2 = new Thread(() -> {
-            while(isRunning()) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                sendDelayRequest();
-            }
-        });
-
         t1.start();
-        t2.start();
     }
 
     /**
@@ -60,6 +45,24 @@ public class Slave extends SimpleUDP {
                 int rcvSynTime = ByteBuffer.wrap(MCReceiveMsg().getData()).getInt();//time
                 int rcvSynId = ByteBuffer.wrap(MCReceiveMsg().getData()).getInt();//id
                 if(rcvSynId == syncId) localClock.setEcart(rcvSynTime - syncTime);
+
+                if(!delayRequestStarted) {
+                    Thread t2 = new Thread(() -> {//delay loop
+                        Random random = new Random();
+                        while(isRunning()) {
+                            try {
+                                //Thread.sleep((4 * Protocol.K) + random.nextInt((60 - 4) * Protocol.K));
+                                Thread.sleep((4 * Protocol.K));
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            sendDelayRequest();
+                        }
+                    });
+                    t2.start();
+                    delayRequestStarted = true;
+                }
                 break;
         }
     }
@@ -90,7 +93,7 @@ public class Slave extends SimpleUDP {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ClockFrame clockFrame = new ClockFrame(new Slave(12000).getLocalClock(), "slave");
+        ClockFrame clockFrame = new ClockFrame(new Slave().getLocalClock(), "slave");
         while(true) {
             clockFrame.update();
             Thread.sleep(500);
