@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="65bf070e-3b64-44a4-bb01-25d67606b823" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/Slave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Slave.java" afterDir="false" />
-    </list>
+    <list default="true" id="65bf070e-3b64-44a4-bb01-25d67606b823" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -230,7 +228,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540891529001" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540895311556" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../AMT/WP1/Teaching-HEIGVD-AMT-2018-Project" />
     <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
@@ -248,7 +246,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.Master">
+  <component name="RunManager" selected="Application.Slave">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="PRRLabo1" />
@@ -292,8 +290,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Master" />
         <item itemvalue="Application.Slave" />
+        <item itemvalue="Application.Master" />
         <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
@@ -327,12 +325,12 @@
       <workItem from="1539176377334" duration="514000" />
       <workItem from="1540824469962" duration="24000" />
       <workItem from="1540824603961" duration="4789000" />
-      <workItem from="1540884416904" duration="4838000" />
+      <workItem from="1540884416904" duration="5493000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="59737000" />
+    <option name="totallyTimeSpent" value="60392000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
